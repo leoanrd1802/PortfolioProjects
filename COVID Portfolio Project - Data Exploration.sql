@@ -1,3 +1,10 @@
+/*
+Covid 19 Data Exploration
+
+Skills used: Joins, CTE's, Temp Tables, Windows Functions, Aggregate Functions, Creating Views, Converting Data Types
+
+*/
+
 Select *
 From PortfolioProject..CovidDeaths
 Order by 3,4
@@ -14,6 +21,7 @@ Order by 1,2
 
 -- Looking at Total Cases Vs Total Deaths
 -- Shows likelihood of dying if you contract covid in your country
+	
 Select Location, date, total_cases, total_deaths, (total_deaths/total_cases)*100 as DeathPercentage
 From PortfolioProject..CovidDeaths
 Where location like '%states%'
@@ -44,15 +52,7 @@ Where continent is not null
 Group by Location
 Order by TotalDeathCOunt desc
 
--- Broken down by continent
-
-Select continent, MAX(cast(Total_deaths as int)) as TotalDeathCount
-From PortfolioProject..CovidDeaths
---Where location like '%states%'
-Where continent is not null
-Group by continent
-Order by TotalDeathCount desc
-
+-- Breaking things down by continent
 -- Shoing continents with the highest death count per population
 
 Select continent, MAX(cast(Total_deaths as int)) as TotalDeathCount
@@ -72,6 +72,7 @@ Group By date
 Order by 1,2
 
 -- Looking at Total Population Vs Vaccinations
+-Shows Percentage of Population that has recieved at least one Covid Vaccine
 
 Select dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations, SUM(Cast(vac.new_vaccinations as int))OVER(Partition by dea.Location Order by dea.location,dea.Date)
 as RollingPeopleVaccinated
@@ -82,7 +83,7 @@ Join PortfolioProject..CovidVaccinations vac
 where dea.continent is not null
 order by 2,3
 
--- Use CTE
+-- Using CTE to perform Calculation on Partition By in previous query
 
 With PopvsVac (Continent, Location, Date, Population, New_vaccinations,RollingPeopleVaccinated)
 as 
@@ -101,7 +102,7 @@ where dea.continent is not null
 Select *, (RollingPeopleVaccinated/Population)*100
 From PopvsVac
 
--- Temp Table
+-- Using Temp Table to performance Calculation on Partition By in previous query
 
 DROP Table if exists #PercentPopulationVaccinated
 Create Table #PercentPopulationVaccinated
@@ -139,4 +140,4 @@ Join PortfolioProject..CovidVaccinations vac
 	On dea.location = vac.location
 	and dea.date = vac.date
 where dea.continent is not null
---order by 2,3
+
