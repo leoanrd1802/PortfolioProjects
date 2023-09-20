@@ -1,6 +1,13 @@
+/*
+
+Cleaning Data in SQL queries
+
+*/
+
 Select *
 From PortfolioProject.dbo.NashvilleHousing
 
+	
 -- Standarize Date Format
 
 Select SaleDateConverted, CONVERT(Date,SaleDate)
